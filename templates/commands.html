@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAANUU Bot Manager - Commands</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">⚡ KAANUU</div>
+        <ul class="sidebar-nav">
+            <li><a href="/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="/bots"><span class="icon">🤖</span> Bots</a></li>
+            <li><a href="/commands" class="active"><span class="icon">📚</span> Commands</a></li>
+            <li><a href="/profile"><span class="icon">👤</span> Profile</a></li>
+        </ul>
+        <div class="sidebar-user">
+            <div class="user-name">{{ user.username }}</div>
+            <div class="user-plan">🔰 {{ user.plan|capitalize }} Plan</div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div style="text-align:center;margin-bottom:40px;">
+            <h1 style="font-size:2.5rem;background:var(--kaanu-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">📚 Command Reference</h1>
+            <p style="color:var(--text-secondary);margin-top:10px;">All 48 commands available in KAANUU User Bot</p>
+        </div>
+        
+        <div class="commands-container">
+            <div class="command-search">
+                <input type="text" id="commandSearch" onkeyup="searchCommands()" placeholder="🔍 Search commands...">
+            </div>
+            
+            <div class="command-category">
+                <h3>📝 Message Management</h3>
+                <div class="command-item"><span class="cmd">.add &lt;message&gt;</span><span class="desc">Add auto-reply message</span><span class="example">.add Hello world!</span><button onclick="copyCommand('.add Hello world!')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.list</span><span class="desc">Show all messages numbered</span><span class="example">.list</span><button onclick="copyCommand('.list')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.del &lt;num&gt;</span><span class="desc">Delete message by number</span><span class="example">.del 1</span><button onclick="copyCommand('.del 1')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.clear</span><span class="desc">Delete ALL messages</span><span class="example">.clear</span><button onclick="copyCommand('.clear')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>🎯 Auto-Reply</h3>
+                <div class="command-item"><span class="cmd">.rr on</span><span class="desc">Enable auto-reply</span><span class="example">.rr on</span><button onclick="copyCommand('.rr on')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rr off</span><span class="desc">Disable auto-reply</span><span class="example">.rr off</span><button onclick="copyCommand('.rr off')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rron</span><span class="desc">Short enable</span><span class="example">.rron</span><button onclick="copyCommand('.rron')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rroff</span><span class="desc">Short disable</span><span class="example">.rroff</span><button onclick="copyCommand('.rroff')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.active</span><span class="desc">Show active users list</span><span class="example">.active</span><button onclick="copyCommand('.active')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.ractive</span><span class="desc">Refresh active users</span><span class="example">.ractive</span><button onclick="copyCommand('.ractive')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>🗑️ Auto-Delete</h3>
+                <div class="command-item"><span class="cmd">.del_msg</span><span class="desc">Auto-delete replied user's messages</span><span class="example">.del_msg (reply)</span><button onclick="copyCommand('.del_msg')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rdel_msg</span><span class="desc">Stop auto-deleting replied user</span><span class="example">.rdel_msg (reply)</span><button onclick="copyCommand('.rdel_msg')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.delall</span><span class="desc">Auto-delete ALL users in chat</span><span class="example">.delall</span><button onclick="copyCommand('.delall')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rdelall</span><span class="desc">Stop auto-delete all</span><span class="example">.rdelall</span><button onclick="copyCommand('.rdelall')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.dlist</span><span class="desc">Show auto-delete users list</span><span class="example">.dlist</span><button onclick="copyCommand('.dlist')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>⚡ Raid System (MAX 1000)</h3>
+                <div class="command-item"><span class="cmd">.raid @user 100</span><span class="desc">Send 100 random messages</span><span class="example">.raid @user 100</span><button onclick="copyCommand('.raid @user 100')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.raid @user 5 hello</span><span class="desc">Send "hello" 5 times</span><span class="example">.raid @user 5 hello</span><button onclick="copyCommand('.raid @user 5 hello')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rraid</span><span class="desc">Emergency stop raid</span><span class="example">.rraid</span><button onclick="copyCommand('.rraid')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.raidstatus</span><span class="desc">Show raid progress</span><span class="example">.raidstatus</span><button onclick="copyCommand('.raidstatus')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.raidlimit</span><span class="desc">Show max limit (1000)</span><span class="example">.raidlimit</span><button onclick="copyCommand('.raidlimit')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>⏱️ Auto-Delete Timer</h3>
+                <div class="command-item"><span class="cmd">.autodel on 30</span><span class="desc">Delete after 30 seconds</span><span class="example">.autodel on 30</span><button onclick="copyCommand('.autodel on 30')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.autodel off</span><span class="desc">Disable timer</span><span class="example">.autodel off</span><button onclick="copyCommand('.autodel off')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.autodel time 60</span><span class="desc">Change to 60 seconds</span><span class="example">.autodel time 60</span><button onclick="copyCommand('.autodel time 60')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rautodel</span><span class="desc">Quick disable</span><span class="example">.rautodel</span><button onclick="copyCommand('.rautodel')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.autodelstatus</span><span class="desc">Show timer settings</span><span class="example">.autodelstatus</span><button onclick="copyCommand('.autodelstatus')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>🛡️ Anti-Delete</h3>
+                <div class="command-item"><span class="cmd">.antidel on</span><span class="desc">Protect your messages</span><span class="example">.antidel on</span><button onclick="copyCommand('.antidel on')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.antidel off</span><span class="desc">Disable protection</span><span class="example">.antidel off</span><button onclick="copyCommand('.antidel off')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rantidel</span><span class="desc">Quick disable</span><span class="example">.rantidel</span><button onclick="copyCommand('.rantidel')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.antidelstatus</span><span class="desc">Show protection status</span><span class="example">.antidelstatus</span><button onclick="copyCommand('.antidelstatus')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>🧹 Safe Purge (OWN MSGS ONLY)</h3>
+                <div class="command-item"><span class="cmd">.purge 10</span><span class="desc">Delete last 10 own messages</span><span class="example">.purge 10</span><button onclick="copyCommand('.purge 10')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.purge 50</span><span class="desc">Delete last 50 own messages</span><span class="example">.purge 50</span><button onclick="copyCommand('.purge 50')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.purgeall</span><span class="desc">Delete ALL own messages</span><span class="example">.purgeall</span><button onclick="copyCommand('.purgeall')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.rpurge</span><span class="desc">Stop purge</span><span class="example">.rpurge</span><button onclick="copyCommand('.rpurge')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.purgestatus</span><span class="desc">Show purge progress</span><span class="example">.purgestatus</span><button onclick="copyCommand('.purgestatus')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>📊 Info</h3>
+                <div class="command-item"><span class="cmd">.ping</span><span class="desc">Response speed + uptime</span><span class="example">.ping</span><button onclick="copyCommand('.ping')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.status</span><span class="desc">Full bot status</span><span class="example">.status</span><button onclick="copyCommand('.status')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.info</span><span class="desc">Bot configuration</span><span class="example">.info</span><button onclick="copyCommand('.info')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.stats</span><span class="desc">Usage statistics</span><span class="example">.stats</span><button onclick="copyCommand('.stats')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.uptime</span><span class="desc">Running duration</span><span class="example">.uptime</span><button onclick="copyCommand('.uptime')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.creator</span><span class="desc">Show KAANUU creator card</span><span class="example">.creator</span><button onclick="copyCommand('.creator')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>🔧 Utility</h3>
+                <div class="command-item"><span class="cmd">.copy</span><span class="desc">Copy replied message to saved</span><span class="example">.copy (reply)</span><button onclick="copyCommand('.copy')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.id</span><span class="desc">Get user/chat ID</span><span class="example">.id</span><button onclick="copyCommand('.id')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.whois @user</span><span class="desc">User info</span><span class="example">.whois @user</span><button onclick="copyCommand('.whois @user')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+            
+            <div class="command-category">
+                <h3>📚 Help</h3>
+                <div class="command-item"><span class="cmd">.help</span><span class="desc">Full KAANUU help menu</span><span class="example">.help</span><button onclick="copyCommand('.help')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.help &lt;cmd&gt;</span><span class="desc">Specific command help</span><span class="example">.help raid</span><button onclick="copyCommand('.help raid')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.helpmsg</span><span class="desc">Message commands help</span><span class="example">.helpmsg</span><button onclick="copyCommand('.helpmsg')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.helprr</span><span class="desc">Auto-reply commands help</span><span class="example">.helprr</span><button onclick="copyCommand('.helprr')" class="btn btn-outline btn-sm">📋</button></div>
+                <div class="command-item"><span class="cmd">.helpdel</span><span class="desc">Deletion commands help</span><span class="example">.helpdel</span><button onclick="copyCommand('.helpdel')" class="btn btn-outline btn-sm">📋</button></div>
+            </div>
+        </div>
+        
+        <div style="text-align:center;margin-top:40px;color:var(--text-secondary);font-size:0.8rem;">
+            ⚡ Powered by KAANUU | Made with ❤️ by KAANUU
+        </div>
+    </div>
+    
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
