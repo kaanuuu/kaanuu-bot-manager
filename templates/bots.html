@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAANUU Bot Manager - Bots</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">⚡ KAANUU</div>
+        <ul class="sidebar-nav">
+            <li><a href="/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="/bots" class="active"><span class="icon">🤖</span> Bots</a></li>
+            <li><a href="/commands"><span class="icon">📚</span> Commands</a></li>
+            <li><a href="/profile"><span class="icon">👤</span> Profile</a></li>
+        </ul>
+        <div class="sidebar-user">
+            <div class="user-name">{{ user.username }}</div>
+            <div class="user-plan">🔰 {{ user.plan|capitalize }} Plan</div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;">
+            <h1 style="background:var(--kaanu-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🤖 Your Bots</h1>
+            <button onclick="openModal('createBotModal')" class="btn btn-primary">➕ Create Bot</button>
+        </div>
+        
+        <div class="bots-grid">
+            {% for bot in bots %}
+            <div class="bot-card" data-bot-id="{{ bot.id }}">
+                <div class="bot-header">
+                    <div>
+                        <div class="bot-name">{{ bot.bot_name }}</div>
+                        <span class="bot-badge {{ bot.login_type }}">
+                            {% if bot.login_type == 'bot_token' %}🤖 Bot Token{% else %}👤 User API{% endif %}
+                        </span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span class="bot-status {{ bot.status }}"></span>
+                    </div>
+                </div>
+                
+                <div style="margin:10px 0;color:var(--text-secondary);font-size:0.9rem;">
+                    {% if bot.login_type == 'bot_token' %}
+                        Token: {{ bot.bot_token[:15] }}...
+                    {% else %}
+                        Phone: {{ bot.phone_number }}
+                    {% endif %}
+                </div>
+                
+                <div style="display:flex;gap:8px;margin:15px 0;flex-wrap:wrap;">
+                    <button onclick="startBot({{ bot.id }})" class="btn btn-success" style="flex:1;">▶ Start</button>
+                    <button onclick="stopBot({{ bot.id }})" class="btn btn-danger" style="flex:1;">⏹ Stop</button>
+                    <button onclick="restartBot({{ bot.id }})" class="btn btn-warning" style="flex:1;">🔄 Restart</button>
+                    <button onclick="deleteBot({{ bot.id }})" class="btn btn-outline" style="flex:1;">🗑 Delete</button>
+                </div>
+                
+                <div style="margin-top:15px;">
+                    <button onclick="toggleSection('messages_{{ bot.id }}')" class="btn btn-outline" style="width:100%;margin-bottom:5px;">💬 Messages</button>
+                    <div id="messages_{{ bot.id }}" style="display:none;padding:10px;background:var(--bg);border-radius:8px;">
+                        <div style="display:flex;gap:8px;margin-bottom:10px;">
+                            <input type="text" id="messageInput_{{ bot.id }}" placeholder="Add message..." style="flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);">
+                            <button onclick="addMessage({{ bot.id }})" class="btn btn-primary" style="padding:8px 16px;">Add</button>
+                        </div>
+                        <div id="messagesList_{{ bot.id }}"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top:10px;">
+                    <button onclick="toggleSection('targets_{{ bot.id }}')" class="btn btn-outline" style="width:100%;margin-bottom:5px;">🎯 Target Users</button>
+                    <div id="targets_{{ bot.id }}" style="display:none;padding:10px;background:var(--bg);border-radius:8px;">
+                        <div style="display:flex;gap:8px;margin-bottom:10px;">
+                            <input type="text" id="targetInput_{{ bot.id }}" placeholder="User ID or @username" style="flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);">
+                            <button onclick="addTarget({{ bot.id }})" class="btn btn-primary" style="padding:8px 16px;">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-secondary);">
+                <div style="font-size:4rem;margin-bottom:20px;">🤖</div>
+                <h3>No bots yet</h3>
+                <p style="margin-top:10px;">Create your first bot to get started!</p>
+                <button onclick="openModal('createBotModal')" class="btn btn-primary" style="margin-top:20px;">Create Bot</button>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="text-align:center;margin-top:40px;color:var(--text-secondary);font-size:0.8rem;">
+            ⚡ Powered by KAANUU
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="createBotModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="background:var(--kaanu-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🤖 Create New Bot</h2>
+                <button onclick="closeModal('createBotModal')" class="modal-close">✕</button>
+            </div>
+            <form onsubmit="createBot(event)">
+                <div class="form-group">
+                    <label>Bot Name</label>
+                    <input type="text" name="name" placeholder="My Awesome Bot" required>
+                </div>
+                <div class="form-group">
+                    <label>Login Type</label>
+                    <select name="type" id="botTypeSelect" onchange="toggleBotTypeFields()" required>
+                        <option value="bot_token">🤖 Bot Token</option>
+                        <option value="user_api">👤 User API</option>
+                    </select>
+                </div>
+                <div id="botTokenFields">
+                    <div class="form-group">
+                        <label>Bot Token</label>
+                        <input type="password" name="token" placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz">
+                    </div>
+                </div>
+                <div id="userAPIFields" style="display:none;">
+                    <div class="form-group">
+                        <label>API ID</label>
+                        <input type="number" name="api_id" placeholder="12345678">
+                    </div>
+                    <div class="form-group">
+                        <label>API Hash</label>
+                        <input type="text" name="api_hash" placeholder="abcdef1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" placeholder="+1234567890">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">🚀 Create Bot</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/static/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-bot-id]').forEach(el => {
+                const botId = el.dataset.botId;
+                loadMessages(botId);
+            });
+        });
+    </script>
+</body>
+</html>
