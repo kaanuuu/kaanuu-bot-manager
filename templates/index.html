@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAANUU Bot Manager</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: var(--bg);
+        }
+        
+        .login-box {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 460px;
+            width: 100%;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--kaanu-gradient);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .login-logo h1 {
+            font-size: 2.8rem;
+            background: var(--kaanu-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .login-logo p {
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+        
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--bg);
+            padding: 6px;
+            border-radius: 14px;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .login-tab.active {
+            background: var(--card);
+            color: var(--text);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .login-tab.bot-tab.active { color: var(--green); }
+        .login-tab.user-tab.active { color: var(--purple); }
+        
+        .login-form {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .login-form.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+        }
+        
+        .btn-gold {
+            width: 100%;
+            padding: 16px;
+            background: var(--kaanu-gradient);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-gold:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 25px rgba(255, 215, 0, 0.3);
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .login-footer a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .login-footer a:hover { text-decoration: underline; }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-error {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+        
+        .alert-success {
+            background: rgba(46, 160, 67, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .alert.show {
+            display: block;
+            animation: slideDown 0.4s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .register-section {
+            display: none;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .register-section.active { display: block; }
+        
+        .otp-section {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .otp-section.active { display: block; }
+        
+        .footer-text {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .footer-text span { color: var(--gold); }
+        
+        @media (max-width: 480px) {
+            .login-box { padding: 25px; }
+            .login-logo h1 { font-size: 2.2rem; }
+            .login-tab { font-size: 0.8rem; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>⚡ KAANUU ⚡</h1>
+                <p>Bot Manager Platform</p>
+            </div>
+            
+            <div id="alert" class="alert"></div>
+            
+            <div class="login-tabs">
+                <button class="login-tab bot-tab active" onclick="switchTab('bot')">
+                    🤖 Bot Token
+                </button>
+                <button class="login-tab user-tab" onclick="switchTab('user')">
+                    👤 User API
+                </button>
+            </div>
+            
+            <div id="botForm" class="login-form active">
+                <form onsubmit="return handleBotLogin(event)">
+                    <div class="form-group">
+                        <label>Bot Name</label>
+                        <input type="text" id="botName" placeholder="My Awesome Bot" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bot Token</label>
+                        <input type="password" id="botToken" placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz" required>
+                    </div>
+                    <button type="submit" class="btn-gold">🚀 Launch Bot</button>
+                </form>
+                <div class="login-footer">
+                    Don't have account? <a onclick="showRegister()">Register</a>
+                </div>
+            </div>
+            
+            <div id="userForm" class="login-form">
+                <form onsubmit="return handleUserLogin(event)">
+                    <div class="form-group">
+                        <label>Bot Name</label>
+                        <input type="text" id="apiBotName" placeholder="My User Bot" required>
+                    </div>
+                    <div class="form-group">
+                        <label>API ID</label>
+                        <input type="number" id="apiId" placeholder="12345678" required>
+                    </div>
+                    <div class="form-group">
+                        <label>API Hash</label>
+                        <input type="text" id="apiHash" placeholder="abcdef1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phoneNumber" placeholder="+1234567890" required>
+                    </div>
+                    <button type="submit" class="btn-gold">📱 Send OTP</button>
+                </form>
+                
+                <div id="otpSection" class="otp-section">
+                    <form onsubmit="return handleOTPVerify(event)">
+                        <div class="form-group">
+                            <label>Verification Code</label>
+                            <input type="text" id="otpCode" placeholder="Enter 5-digit code" required>
+                        </div>
+                        <button type="submit" class="btn-gold">✅ Verify & Launch</button>
+                    </form>
+                </div>
+                
+                <div class="login-footer">
+                    Don't have account? <a onclick="showRegister()">Register</a>
+                </div>
+            </div>
+            
+            <div id="registerSection" class="register-section">
+                <h3 style="margin-bottom:20px;color:var(--gold);">Create Account</h3>
+                <form onsubmit="return handleRegister(event)">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="regUsername" placeholder="Choose username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="regEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPassword" placeholder="Min 6 characters" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-gold">🔐 Register</button>
+                </form>
+                <div class="login-footer" style="margin-top:15px;">
+                    Already have account? <a onclick="hideRegister()">Login</a>
+                </div>
+            </div>
+            
+            <div class="footer-text">
+                Made with <span>❤️</span> by <span>KAANUU</span> | © 2024
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentTab = 'bot';
+        let tempData = {};
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.login-form').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.login-tab').forEach(el => el.classList.remove('active'));
+            
+            if (tab === 'bot') {
+                document.getElementById('botForm').classList.add('active');
+                document.querySelector('.bot-tab').classList.add('active');
+            } else {
+                document.getElementById('userForm').classList.add('active');
+                document.querySelector('.user-tab').classList.add('active');
+            }
+            
+            document.getElementById('alert').className = 'alert';
+            document.getElementById('alert').style.display = 'none';
+        }
+        
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.className = 'alert';
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showRegister() {
+            document.getElementById('registerSection').classList.add('active');
+            document.querySelectorAll('.login-footer').forEach(el => el.style.display = 'none');
+        }
+        
+        function hideRegister() {
+            document.getElementById('registerSection').classList.remove('active');
+            document.querySelectorAll('.login-footer').forEach(el => el.style.display = 'block');
+        }
+        
+        async function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Registration successful! Please login.', 'success');
+                    hideRegister();
+                } else {
+                    showAlert(data.message || 'Registration failed');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.');
+            }
+        }
+        
+        async function handleBotLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('botName').value;
+            const token = document.getElementById('botToken').value;
+            
+            try {
+                const response = await fetch('/api/login_bot_token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bot_name: name, bot_token: token })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Bot connected successfully!', 'success');
+                    setTimeout(() => window.location.href = '/dashboard', 1000);
+                } else {
+                    showAlert(data.message || 'Invalid bot token');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.');
+            }
+        }
+        
+        async function handleUserLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('apiBotName').value;
+            const api_id = document.getElementById('apiId').value;
+            const api_hash = document.getElementById('apiHash').value;
+            const phone = document.getElementById('phoneNumber').value;
+            
+            tempData = { name, api_id, api_hash, phone };
+            
+            try {
+                const response = await fetch('/api/login_user_api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        bot_name: name, 
+                        api_id, 
+                        api_hash, 
+                        phone_number: phone 
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('otpSection').classList.add('active');
+                    showAlert('OTP sent to your Telegram!', 'success');
+                } else {
+                    showAlert(data.message || 'Failed to send OTP');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.');
+            }
+        }
+        
+        async function handleOTPVerify(e) {
+            e.preventDefault();
+            const code = document.getElementById('otpCode').value;
+            
+            try {
+                const response = await fetch('/api/verify_code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        ...tempData, 
+                        code,
+                        bot_name: tempData.name 
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('User API connected successfully!', 'success');
+                    setTimeout(() => window.location.href = '/dashboard', 1000);
+                } else {
+                    showAlert(data.message || 'Invalid verification code');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.');
+            }
+        }
+        
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('tab') === 'user') {
+                switchTab('user');
+            }
+        };
+    </script>
+</body>
+</html>
